@@ -1,0 +1,25 @@
+name: Build ds4vita.skprx
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: vitasdk/vitasdk:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make
+
+      - name: Upload plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: ds4vita-skprx
+          path: build/ds4vita.skprx
