@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   push:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,3 +26,11 @@ jobs:
         with:
           name: ds4vita-skprx
           path: build/ds4vita.skprx
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: ds4vita.skprx (L1/R1 and L2/R2 swapped) build ${{ github.run_number }}
+          body: Plugin built from this repo. Download ds4vita.skprx below and copy it to your Vita.
+          files: build/ds4vita.skprx
