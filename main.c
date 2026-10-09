@@ -206,9 +206,9 @@ static void set_input_emulation(struct ds4_input_report *ds4)
 	int js_moved = 0;
 
 	if (ds4->cross)
-		buttons |= SCE_CTRL_CROSS;
-	if (ds4->circle)
 		buttons |= SCE_CTRL_CIRCLE;
+	if (ds4->circle)
+		buttons |= SCE_CTRL_CROSS;
 	if (ds4->triangle)
 		buttons |= SCE_CTRL_TRIANGLE;
 	if (ds4->square)
