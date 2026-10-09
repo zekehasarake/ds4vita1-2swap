@@ -272,7 +272,7 @@ static void patch_analogdata(int port, SceCtrlData *pad_data, int count,
 	for (i = 0; i < count; i++) {
 		SceCtrlData k_data;
 
-		ksceKernelMemcpyUserToKernel(&k_data, (uintptr_t)pad_data, sizeof(k_data));
+		ksceKernelMemcpyUserToKernel(&k_data, pad_data, sizeof(k_data));
 		if (abs(ds4->left_x - 128) > DS4_ANALOG_THRESHOLD)
 			k_data.lx = ds4->left_x;
 		if (abs(ds4->left_y - 128) > DS4_ANALOG_THRESHOLD)
@@ -285,7 +285,7 @@ static void patch_analogdata(int port, SceCtrlData *pad_data, int count,
 			k_data.lt = ds4->l_trigger;
 		if (ds4->r_trigger > DS4_ANALOG_THRESHOLD)
 			k_data.rt = ds4->r_trigger;
-		ksceKernelMemcpyKernelToUser((uintptr_t)pad_data, &k_data, sizeof(k_data));
+		ksceKernelMemcpyKernelToUser(pad_data, &k_data, sizeof(k_data));
 
 		pad_data++;
 	}
@@ -309,7 +309,7 @@ DECL_FUNC_HOOK(SceCtrl_sceCtrlGetBatteryInfo, int port, SceUInt8 *batt)
 
 	if (ds4_connected && port == 1) {
 		SceUInt8 k_batt;
-		ksceKernelMemcpyUserToKernel(&k_batt, (uintptr_t)batt, sizeof(k_batt));
+		ksceKernelMemcpyUserToKernel(&k_batt, batt, sizeof(k_batt));
 		if (ds4_input.usb_plugged) {
 			k_batt = ds4_input.battery_level <= 10 ? 0xEE : 0xEF;
 		} else {
@@ -317,7 +317,7 @@ DECL_FUNC_HOOK(SceCtrl_sceCtrlGetBatteryInfo, int port, SceUInt8 *batt)
 			else k_batt = (ds4_input.battery_level / 2) + 1;
 			if (k_batt > 5) k_batt = 5;
 		}
-		ksceKernelMemcpyKernelToUser((uintptr_t)batt, &k_batt, sizeof(k_batt));
+		ksceKernelMemcpyKernelToUser(batt, &k_batt, sizeof(k_batt));
 		return 0;
 	}
 
@@ -443,11 +443,11 @@ static void patch_motion_state(SceMotionState *motionState, struct ds4_input_rep
 	SceMotionState k_data;
 	SceMotionState *u_data = motionState;
 
-	ksceKernelMemcpyUserToKernel(&k_data, (uintptr_t)u_data, sizeof(k_data));
+	ksceKernelMemcpyUserToKernel(&k_data, u_data, sizeof(k_data));
 	k_data.acceleration.x = ds4->accel_x;
 	k_data.acceleration.y = ds4->accel_y;
 	k_data.acceleration.y = ds4->accel_z;
-	ksceKernelMemcpyKernelToUser((uintptr_t)u_data, &k_data, sizeof(k_data));
+	ksceKernelMemcpyKernelToUser(u_data, &k_data, sizeof(k_data));
 }
 
 DECL_FUNC_HOOK(SceMotion_sceMotionGetState, SceMotionState *motionState)
@@ -723,7 +723,7 @@ int module_start(SceSize argc, const void *args)
 	opt.uselock = 0x100;
 	opt.field_8 = 0x10000;
 	opt.field_C = 0;
-	opt.field_10 = 0;
+	opt.memtype = 0;
 	opt.field_14 = 0;
 	opt.field_18 = 0;
 
